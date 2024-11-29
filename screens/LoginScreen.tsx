@@ -1,13 +1,9 @@
 import { FC, useState } from "react";
 import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 import { StackParamList } from "../navigation/StackNavigator";
+
 import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
-import {
-  ImageBackground,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -30,6 +26,11 @@ const LoginScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
 
+  const keyboardHide = () => {
+    setKeyboardStatus(false);
+    Keyboard.dismiss();
+  };
+
   const handleEmailChange = (value: string) => {
     setEmail(value);
     setKeyboardStatus(true);
@@ -37,6 +38,7 @@ const LoginScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
+    setKeyboardStatus(true);
   };
 
   const showPassword = () => {
@@ -60,12 +62,14 @@ const LoginScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ImageBackground
-        source={require("../assets/images/bg.png")}
-        resizeMode="cover"
-        style={styles.image}
-      >
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.containerForKeyboard}>
+        <Image
+          source={require("../assets/images/bg.png")}
+          resizeMode="cover"
+          style={styles.image}
+        />
+
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -73,7 +77,7 @@ const LoginScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
           <View
             style={{
               ...styles.formContainerLogin,
-              height: keyboardStatus ? "50%" : "55%",
+              height: keyboardStatus ? "60%" : "50%",
             }}
           >
             <Text style={styles.title}>Увійти</Text>
@@ -81,7 +85,6 @@ const LoginScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
             <View style={[styles.innerContainer, styles.inputContainer]}>
               <Input
                 value={email}
-                autofocus={true}
                 placeholder="Адреса електронної пошти"
                 onTextChange={handleEmailChange}
               />
@@ -112,7 +115,7 @@ const LoginScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </ImageBackground>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

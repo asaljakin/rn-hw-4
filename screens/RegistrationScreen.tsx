@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "react-native-screens/lib/typescript/nati
 import { StackParamList } from "../navigation/StackNavigator";
 
 import {
-  ImageBackground,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -28,19 +28,25 @@ const RegistrationScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
 
+  const keyboardHide = () => {
+    setKeyboardStatus(false);
+    Keyboard.dismiss();
+  };
+
+  const handleInputFocus = (value: boolean) => {
+    setKeyboardStatus(value);
+  };
+
   const handleLoginChange = (value: string) => {
     setLogin(value);
-    setKeyboardStatus(true);
   };
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    setKeyboardStatus(true);
   };
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
-    setKeyboardStatus(true);
   };
 
   const showPassword = () => {
@@ -64,12 +70,13 @@ const RegistrationScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ImageBackground
-        source={require("../assets/images/bg.png")}
-        resizeMode="cover"
-        style={styles.image}
-      >
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.containerForKeyboard}>
+        <Image
+          source={require("../assets/images/bg.png")}
+          resizeMode="cover"
+          style={styles.image}
+        />
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -77,7 +84,7 @@ const RegistrationScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
           <View
             style={{
               ...styles.formContainer,
-              height: keyboardStatus ? "60%" : "77%",
+              height: keyboardStatus ? "78%" : "60%",
             }}
           >
             <View style={styles.avatarContainer}>
@@ -88,16 +95,16 @@ const RegistrationScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
             <View style={[styles.innerContainer, styles.inputContainer]}>
               <Input
                 value={login}
-                //autofocus={true}
                 placeholder="Логін"
                 onTextChange={handleLoginChange}
+                onFocusStatus={handleInputFocus}
               />
 
               <Input
                 value={email}
-                //autofocus={true}
                 placeholder="Адреса електронної пошти"
                 onTextChange={handleEmailChange}
+                onFocusStatus={handleInputFocus}
               />
 
               <Input
@@ -107,6 +114,7 @@ const RegistrationScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
                 outerStyles={styles.passwordButton}
                 onTextChange={handlePasswordChange}
                 secureTextEntry={isPasswordVisible}
+                onFocusStatus={handleInputFocus}
               />
             </View>
 
@@ -128,7 +136,7 @@ const RegistrationScreen: FC<HomeScreenProps> = ({ navigation, route }) => {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </ImageBackground>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
